@@ -1,57 +1,63 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import './league-table.css';
 
-const teams = [{
-			name: 'Arsenal',
-			played: 19,
-			won: 19,
-			drawn: 0,
-			lost: 0,
-			gd: 30,
-			points: 50
-		},{
-			name: 'Arsenal',
-			played: 19,
-			won: 19,
-			drawn: 0,
-			lost: 0,
-			gd: 30,
-			points: 50
-		},{
-			name: 'Arsenal',
-			played: 19,
-			won: 19,
-			drawn: 0,
-			lost: 0,
-			gd: 30,
-			points: 50
-		},{
-			name: 'Arsenal',
-			played: 19,
-			won: 19,
-			drawn: 0,
-			lost: 0,
-			gd: 30,
-			points: 50
-		},{
-			name: 'Arsenal',
-			played: 19,
-			won: 19,
-			drawn: 0,
-			lost: 0,
-			gd: 30,
-			points: 50
-		},{
-			name: 'Arsenal',
-			played: 19,
-			won: 19,
-			drawn: 0,
-			lost: 0,
-			gd: 30,
-			points: 50
-		}];
-
 export class LeagueTable extends Component {
+
+	constructor() {
+		super();
+		this.state = {
+			teams: []
+		}
+	}
+
+	getData() {
+		axios({
+			method: 'GET',
+			url: 'http://api.football-data.org/v1/competitions/398/leagueTable?season=2018',
+			headers: {
+				"X-Auth-Token": '2698794f3ede4d0c9b448822a55978c0'
+			}
+		})
+		.then(data => {
+			this.setState({ teams: data.data.standing });
+		})
+		.catch(err => {
+			console.log(err);
+		});
+	}
+
+	getTeams() {
+		return this.state.teams.map(team => {
+			return(<tr>
+				<td>
+					{ team.teamName }
+				</td>
+				<td>
+					{ team.playedGames }
+				</td>
+				<td>
+					{ team.wins }
+				</td>
+				<td>
+					{ team.draws }
+				</td>
+				<td>
+					{ team.losses }
+				</td>
+				<td>
+					{ team.goalDifference }
+				</td>
+				<td>
+					{ team.points }
+				</td>
+			</tr>)
+		});
+	}
+
+	componentWillMount() {
+		this.getData();
+	}
 
 	render() {
 		return (
@@ -81,31 +87,7 @@ export class LeagueTable extends Component {
 					</tr>
 				</thead>
 				<tbody>
-					{ teams.map(team =>
-						<tr>
-							<td>
-								{ team.name }
-							</td>
-							<td>
-								{ team.played }
-							</td>
-							<td>
-								{ team.won }
-							</td>
-							<td>
-								{ team.drawn }
-							</td>
-							<td>
-								{ team.lost }
-							</td>
-							<td>
-								{ team.gd }
-							</td>
-							<td>
-								{ team.points }
-							</td>
-						</tr>
-					) }
+					{ this.getTeams() }
 				</tbody>
 			</table>
 		)
